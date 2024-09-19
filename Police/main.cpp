@@ -33,9 +33,7 @@ const std::map<int, std::string>VIOLATIONS =
 
 class Crime
 {
-	std::string license_plate;
 	int id;
-	int violation;
 	std::string place;
 	tm time;
 public:
@@ -52,6 +50,11 @@ public:
 	{
 		return VIOLATIONS.at(id);
 	}
+	const int get_violation_id()const
+	{
+		return id;
+	}
+
 	const std::string& get_place()const
 	{
 		return place;
@@ -66,7 +69,11 @@ public:
 		strftime(formated, SIZE, "%R,%e,%m.%y", &time);
 		return formated;
 	}
-	
+	const time_t get_timestamp()const
+	{
+		tm copy = time;
+		return mktime(&copy);
+	}
 	/*void set_license_plate(const std::string& license_plate)
 	{
 		this->license_plate = license_plate;
@@ -96,7 +103,7 @@ public:
 		this->time.tm_min = time_elements[1];
 		this->time.tm_mday = time_elements[2];
 		this->time.tm_mon= time_elements[3];
-		this->time.tm_year= time_elements[4];
+		this->time.tm_year= time_elements[4]-1900;
 
 		//this->time = time;
 	}
@@ -126,6 +133,11 @@ public:
 std::ostream& operator<<(std::ostream& os, const Crime& obj)
 {
 	return os << obj.get_time() << " : " << obj.get_place() << " " << obj.get_violation();
+}
+std::ofstream& operator<<(std::ofstream& os, const Crime& obj)
+{
+	 os << obj.get_violation_id() << " " << obj.get_timestamp() << " " << obj.get_place();
+	 return os;
 }
 void print(const std::map<std::string, std::list<Crime>>& base);
 void save(const std::map<std::string, std::list<Crime>>& base,const std::string& filename);
@@ -168,7 +180,7 @@ void print(const std::map<std::string, std::list<Crime>>& base)
 void save(const std::map<std::string, std::list<Crime>>& base, const std::string& filename)
 {
 std::ofstream fout(filename);
-	cout << delimiter << endl;
+	//fout << delimiter << endl;
 	for
 		(
 			std::map<std::string, std::list<Crime>>::const_iterator map_it = base.begin();
@@ -177,12 +189,13 @@ std::ofstream fout(filename);
 
 			)
 	{
-		fout << map_it->first << ":\n";
+		fout << map_it->first << ":\t";
 		for (std::list<Crime>::const_iterator it = map_it->second.begin(); it != map_it->second.end(); ++it)
 		{
-			fout << "\t" << *it << endl;
+			fout << *it << " , ";
 		}
-		fout << delimiter << endl;
+		fout.seekp(-1, std::ios::cur);
+		fout << ";\n";
 	}
 	fout.close();
 	std::string command = "notepad " + filename;

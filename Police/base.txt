@@ -1,18 +1,3 @@
-a000bb:
-	17:45, 1,09.24 : Kitega str Lack of the right to drive a car
-	17:45, 1,09.24 : Mongala sq. Driving through a red light 
-
------------------------------------------------------
-
-a001aa:
-	21:50, 1,09.24 : Niagwe str Driving at the Crossroads
-	21:50, 1,09.24 : Ngaliema sq Driving into the oncoming lane
-
------------------------------------------------------
-
-a777bb:
-	18:10, 1,10.24 : Limaya str Seat Belt
-	12:25,20,09.24 : Liberty sq. Parking in the wrong place
-
------------------------------------------------------
-
+a000bb:	6 1725201900 Kitega str , 8 1725201900 Mongala sq. , 
+a001aa:	10 1725216600 Niagwe str , 9 1725216600 Ngaliema sq , 
+a777bb:	1 1727795400 Limaya str , 2 1726824300 Liberty sq. , 
