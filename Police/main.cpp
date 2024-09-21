@@ -16,6 +16,28 @@ using std::endl;
 #define tab "\t"
 #define delimiter "\n-----------------------------------------------------\n"
 
+#define Enter    12
+#define Escape    27
+#define UP_ARRON  72
+#define DOWN_ARRON  80
+const char* MENU_ITEMS[] =
+{
+	"1. Load database from file",
+	"2. Save  the database to a file",
+	"3. Display the database on the screen",
+	"4. Display information by number",
+	"5. Add a violtion",
+};
+const int MENU_SIZE = sizeof(MENU_ITEMS) / sizeof(MENU_ITEMS[0]);
+
+//const std::map<int, std::string>MENU_ITEMS =
+//{
+	//"1. Load database from file",
+	//"2. Save  the database to a file",
+	//"3. Display the database on the screen",
+	//"4. Display information by number",
+	//"5. Add a violtion",
+//};
 const std::map<int, std::string>VIOLATIONS =
 {
 	{1, "Seat Belt"},
@@ -161,6 +183,7 @@ std::istream& operator>>(std::istream& is, Crime& obj)
 	obj.set_place(place);
 	return is;
 }
+int menu();
 void print(const std::map<std::string, std::list<Crime>>& base);
 void save(const std::map<std::string, std::list<Crime>>& base,const std::string& filename);
 std::map<std::string, std::list<Crime>> load(const std::string& filename);
@@ -179,7 +202,44 @@ void main()
 	};
 	print(base);
 	save(base, "base.txt");
+	do
+	{
+		switch (menu())
+		{
 
+		}
+	} while (true);
+
+}
+int menu()
+{
+	int selected_item = 0;
+	char key;
+	do
+	{
+		system("CLS");
+		for (int i = 0; i < sizeof(MENU_SIZE);i++)
+		{
+			cout << (i == selected_item ?  "[" : " ");
+			cout.width(32);
+			cout << std::left;
+			cout << MENU_ITEMS[i];
+			cout << (i == selected_item ?  "]" : " ");
+			cout << endl;
+		}
+		key = _getch();
+		//cout << (int)key << endl;
+		switch (key)
+		{
+		case UP_ARRON: 
+			if (selected_item > 0)selected_item--; break;
+		case DOWN_ARRON: 
+			if (selected_item > sizeof(MENU_ITEMS[0]) - 1) selected_item--; break;
+		case Enter: return selected_item + 1 ;
+		case Escape: return 0;
+		}
+	} while (true);
+	return 0;
 }
 void print(const std::map<std::string, std::list<Crime>>& base)
 {
