@@ -1,5 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 #pragma warning(disable: 4326)
+#include<Windows.h>
 #include<iostream>
 #include<fstream>
 #include<string>
@@ -20,17 +21,7 @@ using std::endl;
 #define Escape    27
 #define UP_ARRON  72
 #define DOWN_ARRON  80
-const char* MENU_ITEMS[] =
-{
-	"1. Load database from file",
-	"2. Save  the database to a file",
-	"3. Display the database on the screen",
-	"4. Display information by number",
-	"5. Add a violtion",
-};
-const int MENU_SIZE = sizeof(MENU_ITEMS) / sizeof(MENU_ITEMS[0]);
-
-//const std::map<int, std::string>MENU_ITEMS =
+//const char* MENU_ITEMS[] =
 //{
 	//"1. Load database from file",
 	//"2. Save  the database to a file",
@@ -38,6 +29,16 @@ const int MENU_SIZE = sizeof(MENU_ITEMS) / sizeof(MENU_ITEMS[0]);
 	//"4. Display information by number",
 	//"5. Add a violtion",
 //};
+//const int MENU_SIZE = sizeof(MENU_ITEMS) / sizeof(MENU_ITEMS[0]);
+
+const std::map<int, std::string>MENU_ITEMS =
+{
+	{1,"Load database from file"},
+	{2,"Save  the database to a file"},
+	{3,"Display the database on the screen"},
+	{4,"Display information by number"},
+	{5,"Add a violtion"},
+};
 const std::map<int, std::string>VIOLATIONS =
 {
 	{1, "Seat Belt"},
@@ -188,13 +189,17 @@ void print(const std::map<std::string, std::list<Crime>>& base);
 void save(const std::map<std::string, std::list<Crime>>& base,const std::string& filename);
 std::map<std::string, std::list<Crime>> load(const std::string& filename);
 
+//#define SAVE_CHECK
+#define LOAD_CHECK
+
 void main()
 {
 	setlocale(LC_ALL, "");
+#ifdef SAVE_CHECK
 	/*Crime crime(1, "Street.Limaya", "18:10 1.09.2024");
-	cout << crime << endl;*/
+cout << crime << endl;*/
 
-	std::map<std::string, std::list<Crime>> base 
+	std::map<std::string, std::list<Crime>> base
 	{
 		{"a777bb", {Crime(1,"Limaya str", "18:10 1.09.2024"), Crime(2,"Liberty sq.","12:25 20.08.2024")}},
 		{"a000bb", {Crime(6,"Kitega str", "17:45 1.08.2024"), Crime(8,"Mongala sq.","17:45 01.08.2024")}},
@@ -202,42 +207,53 @@ void main()
 	};
 	print(base);
 	save(base, "base.txt");
+#endif // SAVE_CHECK
+	std::map<std::string, std::list<Crime>> base = load("base.txt");
 	do
 	{
 		switch (menu())
 		{
-
+		case 0 : return;
+		case 1: base = load("base.txt"); break;
+		case 2: save (base, "base.txt"); break;
+		case 3: print(base);
+		case 4: cout << "coming soon" << endl; break;
+		case 5: cout << "coming soon" << endl; break;
 		}
 	} while (true);
 
 }
 int menu()
 {
-	int selected_item = 0;
+	int selected_item = 1;
 	char key;
 	do
 	{
 		system("CLS");
-		for (int i = 0; i < sizeof(MENU_SIZE);i++)
+		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+		for (int i = 1; i <= MENU_ITEMS.size();i++)
 		{
 			cout << (i == selected_item ?  "[" : " ");
-			cout.width(32);
+			cout << i << ". ";
+			cout.width(38);
 			cout << std::left;
-			cout << MENU_ITEMS[i];
-			cout << (i == selected_item ?  "]" : " ");
+			if(i==selected_item)SetConsoleTextAttribute(hConsole, 0x70);
+			cout << MENU_ITEMS.at(i);
+			SetConsoleTextAttribute(hConsole, 0x07);
+			cout << (i == selected_item ?  "  ]" : " ");
 			cout << endl;
 		}
 		key = _getch();
 		//cout << (int)key << endl;
 		switch (key)
 		{
-		case UP_ARRON: 
-			if (selected_item > 0)selected_item--; break;
-		case DOWN_ARRON: 
-			if (selected_item > sizeof(MENU_ITEMS[0]) - 1) selected_item--; break;
-		case Enter: return selected_item + 1 ;
+		case UP_ARRON: /*if (selected_item > 1)*/selected_item--; break;
+		case DOWN_ARRON:/*if (selected_item < MENU_ITEMS.size())*/ selected_item++; break;
+		case Enter: return selected_item;
 		case Escape: return 0;
 		}
+		if (selected_item == MENU_ITEMS.size() + 1)selected_item = 1;
+		if (selected_item == 0)selected_item = MENU_ITEMS.size();
 	} while (true);
 	return 0;
 }
@@ -260,6 +276,7 @@ void print(const std::map<std::string, std::list<Crime>>& base)
 		cout << delimiter << endl;
 	}
 	cout << "Number of plates in base: " << base.size() << endl;
+	system("PAUSE");
 }
 void save(const std::map<std::string, std::list<Crime>>& base, const std::string& filename)
 {
